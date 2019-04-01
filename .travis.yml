@@ -1,0 +1,42 @@
+language: node_js
+node_js:
+- lts/*
+install: |-
+  npm ci
+  npm install -g codecov
+script: |-
+  npm run build || travis_terminate 1
+  ./node_modules/.bin/nyc report --reporter lcovonly -- -R spec
+  codecov
+  log=$(git log $TRAVIS_COMMIT_RANGE --oneline)
+  echo $'**Change log:**<br/>'${log//$'\n'/<br/>}
+branches:
+  only:
+    - master
+before_deploy: |-
+  log=$(git log $TRAVIS_COMMIT_RANGE --oneline)
+  export TAG=$'v'$TRAVIS_COMMIT_MESSAGE
+  export BODY=$'**Change log:**<br/>'${log//$'\n'/<br/>}
+deploy:
+  - provider: releases
+    skip_cleanup: true
+    api_key:
+      secure: J7dpKsv9D4xKnSgw8sNTPqGeKzONin9gGP32SFJyFqZGpfnpoWjZhzZHf39i8mw5lFdvnpVdgBCG7wpmHITIMpK1lMjq67ayju1bXmNcuABM88WBy/P3qdPRCZa3A39HhAR3TwhOCY/bpy0H+LkIqKnAZ+fMBIeU54MfjVSmW/yBnjVtjQdilVCueh11EaSY3vkLzY+qe8icJkdrd32QEhmOqfuqUGbN7ZV26vJtenHf1clmswpiwiPKJEJMt2za4e3LEm3/5CGTeoCLOaUK3sI09UG7jYNrLRW0g0ZRRYBPzlWyQHZDgo8sW0yWolspWmrflOV4C5JCSU+D4COLhdCw9TfRnpH8Hpp14326NSWG6vUn4B9eBIZphXtP2zDplig7BCDKB95Iyj1MMP2bR3eNgobxGygZu6GPwlsmIto5rAJHubJIc4+9Ut2v4DjxfoU7HBKM0e+2liUvOYatvCeynfUoU4OEcdEBoql1/JHjy46dYU66VgYWcBQ4orWRQrSFoCaCm32vs72JI4iMV56f/EVEeh45omPE7Gg9R3LZ1V32uEpr3IUfk0PghszHkMLYH0ieoXe+CRo/rRkSD9WF5BELL8+YP3JARVhh0umhZuyfNIcBmq1BBJ5siMu9yrQJ5Hy8r1W/LFrPpy18f/OOHtiOba3GgIgxeK4nHUA=
+    file: README.md
+    name: Release $TRAVIS_COMMIT_MESSAGE
+    tag_name: $TAG
+    body: $BODY
+    on:
+      repo: Guseyn/vNotes
+      branch:
+        - master
+      condition: $TRAVIS_COMMIT_MESSAGE =~ ^([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})$
+  - provider: npm
+    email: guseynism@gmail.com
+    api_key:
+      secure: WC8JkjzYiz79LIGAR5JSC1nbTXXNho4BkSz1nk0CfF18PthaWoezTpXdjw08LHmsVYF1slH/662iZQf1TjxnK6UuqMdT8Hc3VY3/tkDYO4rjXvdB5ruj+95rcrX71RX8syXIjogEA5+l5UKez0IGD2nl3aN730kcLdSH8IO3APsM6EYG0phhEgv+18tSh1SGHGZeENi4a3nfimHUImcVbNK0ws2a+rMmEfr7o08o8eabxRhCQAQp5g3JRclPQVYU+rlT7HoRiq0jjR/NgTyYbKilwjig1UeC8UU5xiJdE3rc/9NrD1VFplN9CXBp8X/Gx9HQGcu0WclN6qi4Z/kzGoYa34ghNJ7u/MALEq40RCwgTuyrTvou6egB/RNr5SnbnBUqyaGJCuCN0l9g1AeTVtnvcKJaHszmQm6WfqkO4iBHUVIlP//a3ypopjqPkmcFtmS9WT4LmkwPb/MxVvhKk6HdqOU5o52Mb/9jKeSimfI+8ZarZXxVfVh3ZoOHKmHUzY6VDMaL7DeQvq4p0r3cpFbIc1H6AKA+LPNClK+FEtAzicqxbIfGl+Lc3lw95jvTvWPFKHqbG/hlTqX6AlizVyEB2lL7kMVB+pOjFXk1XV2Itt4OaAGKOHhAcMmJZEUY2t94x9a79sZwdmG6mU3rTRkXKHK9O41PQzd5X7717BQ=
+    on:
+      repo: Guseyn/vNotes
+      branch:
+        - master
+      condition: $TRAVIS_COMMIT_MESSAGE =~ ^([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})$
