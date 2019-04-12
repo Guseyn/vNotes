@@ -11,7 +11,10 @@ const { ReadDataByPath } = require('@cuties/fs')
 const { ParsedJSON } = require('@cuties/json')
 const { SpawnedCommand } = require('@cuties/spawn')
 
-new ExecutedLint(process, './src', './test').after(
+new ExecutedLint(process, './src', './test').call()
+
+/*
+after(
   new ExecutedTestCoverageReport(
     new ExecutedTestCoverageCheck(
       new ExecutedTestCoverage(
@@ -26,8 +29,7 @@ new ExecutedLint(process, './src', './test').after(
       ), (linesPct, statementsPct, functionsPct, branchesPct) => {
         return (linesPct + statementsPct + functionsPct + branchesPct) / 4
       }
-    ).after(
-      new SpawnedCommand('grunt')
     )
   )
-).call()
+)
+*/
