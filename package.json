@@ -30,6 +30,8 @@
     "@cuties/json": "^1.1.0",
     "@cuties/spawn": "^1.0.1",
     "@cuties/wall": "^1.1.0",
+    "svg.js": "^2.7.1",
+    "svgdom": "0.0.18",
     "test-executor": "^1.2.1"
   },
   "devDependencies": {
